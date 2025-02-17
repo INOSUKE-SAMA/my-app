@@ -1,10 +1,21 @@
-import { notFound } from "next/navigation";
+import { Metadata } from "next";
 
-export default function ProductDetails({ params }: { params: { productId: string } }) {
-    if(parseInt(params.productId)>10000){
-            notFound();
-        }
-    return (
-        <p>Product Details {params.productId}</p>
-    );
+type Props = {
+    params: Promise<{ productId: string }>; // Ensure params is awaited
+};
+
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
+    const { productId } = await params; // Await params before using
+
+    if (!productId) {
+        return { title: "Product Not Found" };
+    }
+
+    return {
+        title: `Samsung ${productId}`,
+    };
+};
+
+export default async function ProductDetails({ params }: { params: { productId: string } }) {
+    return <p>Product Details {params.productId}</p>;
 }
